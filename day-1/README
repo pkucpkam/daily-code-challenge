@@ -1,0 +1,40 @@
+# Khoảng cách lớn nhất của quãng đường
+## Yêu cầu
+
+An và Bình đang sống trong một thành phố chỉ có ba tòa nhà: rạp chiếu phim, cửa hàng và ngôi nhà của họ. Một hôm nay họ có hẹn dến rạp phim, sau khi kết thúc họ sẽ cùng nhau đi về nhà.
+
+Bình muốn về nhà, nhưng An phải đến cửa hàng trước và sau đó mới về nhà. Họ đồng ý đi cùng nhau một quãng đường nào đó để thảo luận về bộ phim, sau đó sẽ chia tay và mỗi người về nhà riêng. Hành trình của Bình và An sẽ là các đường cong liên tục, có điểm cuối là rạp phim và ngôi nhà, nhưng với An, đường của cậu ấy sẽ đi qua cửa hàng.
+
+Họ muốn tìm khoảng cách lớn nhất mà họ có thể đi cùng nhau để thảo luận về bộ phim. Điều kiện là khoảng cách mà An và Bình đi không được chênh lệch quá nhiều.
+
+### Định dạng đầu vào
+Đầu vào gồm hai số nguyên t1 và t2, là hạn chế về khoảng cách mà An và Bình có thể đi.
+
+Tiếp theo là ba tọa độ của rạp, ngôi nhà và cửa hàng.
+
+### Định dạng đầu ra
+Đầu ra là khoảng cách lớn nhất mà An và Bình có thể đi cùng nhau, thảo luận về bộ phim, đưa ra với độ chính xác ít nhất 4 chữ số thập phân.
+
+### Ví dụ 1 : 
+
+Input: 
+0 2
+0 0
+4 0
+-3 0
+
+Output: 
+1.0000000000
+
+----------------------------------------
+
+### Ví dụ 2 : 
+
+Input: 
+0 0
+0 0
+2 0
+1 0
+
+Output: 
+2.0000000000
