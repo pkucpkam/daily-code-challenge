@@ -1,7 +1,5 @@
 # daily-code-challenge
 
-# DailyCodeChallenge
-
 **DailyCodeChallenge**! Đây là một dự án cá nhân nhằm mục tiêu giải quyết một bài toán lập trình mỗi ngày. 
 
 ## Mục tiêu
