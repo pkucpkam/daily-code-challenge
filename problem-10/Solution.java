@@ -41,14 +41,14 @@ public class Solution {
         return dummy.next;
     }
 
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        ListNode list1 = solution.new ListNode(1, solution.new ListNode(2, solution.new ListNode(4)));
-        ListNode list2 = solution.new ListNode(1, solution.new ListNode(3, solution.new ListNode(4)));
-        ListNode result = solution.mergeTwoLists(list1, list2);
-        while (result != null) {
-            System.out.print(result.val + " ");
-            result = result.next;
-        }
-    }
+    // public static void main(String[] args) {
+    //     Solution solution = new Solution();
+    //     ListNode list1 = solution.new ListNode(1, solution.new ListNode(2, solution.new ListNode(4)));
+    //     ListNode list2 = solution.new ListNode(1, solution.new ListNode(3, solution.new ListNode(4)));
+    //     ListNode result = solution.mergeTwoLists(list1, list2);
+    //     while (result != null) {
+    //         System.out.print(result.val + " ");
+    //         result = result.next;
+    //     }
+    // }
 }
