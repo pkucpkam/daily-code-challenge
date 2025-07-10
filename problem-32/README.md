@@ -16,7 +16,7 @@ Output: 4
 
 Example 3:
 Input: nums = [1]
-Output: 1
+Output: 1       
 
 ## Constraints:
 1 <= s.length <= 2 * 10^5
