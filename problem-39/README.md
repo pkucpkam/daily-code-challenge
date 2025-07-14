@@ -1,22 +1,29 @@
-# Excel Sheet Column Number
+# Combine Two Tables
 ## Description
 
 Given a string columnTitle that represents the column title as appears in an Excel sheet, return its corresponding column number.
 
 ## Example
-Example 1:
-Input: columnTitle = "A"
-Output: 1
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| personId    | int     |
+| lastName    | varchar |
+| firstName   | varchar |
++-------------+---------+
+personId is the primary key (column with unique values) for this table.
+This table contains information about the ID of some persons and their first and last names.
 
-Example 2:
-Input: columnTitle = "AB"
-Output: 28
-
-Example 3:
-Input: columnTitle = "ZY"
-Output: 701
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| addressId   | int     |
+| personId    | int     |
+| city        | varchar |
+| state       | varchar |
++-------------+---------+
+addressId is the primary key (column with unique values) for this table.
+Each row of this table contains information about the city and state of one person with ID = PersonId.
 
 ## Constraints:
-1 <= columnTitle.length <= 7
-columnTitle consists only of uppercase English letters.
-columnTitle is in the range ["A", "FXSHRXW"].
+
