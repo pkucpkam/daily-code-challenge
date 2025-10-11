@@ -1,52 +1,30 @@
-import java.util.*;
-
 class Solution {
-    public boolean isScramble(String s1, String s2) {
-        if (s1.length() != s2.length())
-            return false;
-        return helper(s1, s2, new HashMap<>());
-    }
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0)
+            return 0;
+        int n = s.length();
+        if (s.charAt(0) == '0')
+            return 0;
 
-    private boolean helper(String a, String b, Map<String, Boolean> memo) {
-        String key = a + "#" + b;
-        if (memo.containsKey(key))
-            return memo.get(key);
-        if (a.equals(b)) {
-            memo.put(key, true);
-            return true;
-        }
-        if (!sameCharMultiset(a, b)) {
-            memo.put(key, false);
-            return false;
-        }
+        int prev = 1, curr = 1;
 
-        int n = a.length();
         for (int i = 1; i < n; i++) {
-            if (helper(a.substring(0, i), b.substring(0, i), memo)
-                    && helper(a.substring(i), b.substring(i), memo)) {
-                memo.put(key, true);
-                return true;
-            }
-            if (helper(a.substring(0, i), b.substring(n - i), memo)
-                    && helper(a.substring(i), b.substring(0, n - i), memo)) {
-                memo.put(key, true);
-                return true;
+            int ways = 0;
+            char ch = s.charAt(i);
+            if (ch != '0')
+                ways += curr; 
+
+            int twoVal = (s.charAt(i - 1) - '0') * 10 + (ch - '0');
+            if (twoVal >= 10 && twoVal <= 26)
+                ways += prev; 
+
+            prev = curr;
+            curr = ways;
+            if (curr == 0 && i < n - 1) {
+                
             }
         }
 
-        memo.put(key, false);
-        return false;
-    }
-
-    private boolean sameCharMultiset(String a, String b) {
-        int[] cnt = new int[26];
-        for (int i = 0; i < a.length(); i++) {
-            cnt[a.charAt(i) - 'a']++;
-            cnt[b.charAt(i) - 'a']--;
-        }
-        for (int c : cnt)
-            if (c != 0)
-                return false;
-        return true;
+        return curr;
     }
 }
