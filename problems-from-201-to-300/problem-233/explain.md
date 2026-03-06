@@ -1,33 +1,62 @@
-# Fraction to Recurring Decimal — Explanation
+# Fraction to Recurring Decimal (Problem 233)
 
-## Best Approach
+## Yêu cầu bài toán
 
-- Use long-division simulation with a hash map: `remainder -> index in result string`.
-- If a remainder repeats, the digits between first occurrence and current position form the recurring cycle, so wrap them with `(` and `)`.
-- Convert `numerator` and `denominator` to `long` before `abs` to avoid overflow for `Integer.MIN_VALUE`.
+- Chắp cho bạn cặp số gồm Tử số `numerator` và Mẫu số `denominator`.
+- Cầu xin bạn vạch trần ra kết quả bằng phép toán chia thập phân của nó, nhét chuỗi kết quả đóng đít rập lót bằng chữ `String`.
+- Phạt siêu nặng: Nếu vũng dãi dẹo của cái phép chia sau dấu xẻng lẻ thập phân có nứt vòng lặp liên hoan nhịp lướt chu kì "vô hạn tuần hoàn" chắp sập đi lại. Phải kìm đầu mổ bọc ngoặc cái phân cung tuần hoàn đó bằng móc kẹp `(...)`.
+- Trả vát lố chuỗi, ví dụ: 4/333 xỏ móc `"0.(012)"`. 
 
-## How It Works
+*(Bài này tương tự bài 232, xin vui lòng xem giải thích chi tiết tại bài 232 phía trên cùng kho).*
+*(This problem is exactly the same as problem 232. The algorithmic idea and implementation are identical, mapping remainders to detect recurring cycles.)*
 
-- If `numerator == 0`, return `"0"`.
-- Determine sign: result is negative only when exactly one of numerator/denominator is negative (`xor`).
-- Append integer part: `dividend / divisor`.
-- Start fractional part with `remainder = dividend % divisor`.
-- For each step:
-	- If remainder was seen before, insert `(` at stored index and append `)`, then stop.
-	- Otherwise, store current result length for this remainder.
-	- Multiply remainder by `10`, append next digit `remainder / divisor`, then update `remainder %= divisor`.
-- If remainder becomes `0`, the decimal terminates (no parentheses).
+## Code (Java)
 
-## Why This Is Optimal
+```java
+import java.util.HashMap;
+import java.util.Map;
 
-- Time: `O(k)`, where `k` is the number of produced decimal digits (until termination or cycle detection).
-- Space: `O(k)` for stored remainders.
-- This is optimal in practice and standard for this problem, because cycle detection in decimal expansion requires tracking previously seen remainders.
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) {
+            return "0";
+        }
 
-## Edge Cases Covered
+        StringBuilder result = new StringBuilder();
 
-- Zero numerator: `0 / x`.
-- Negative results and correct sign placement.
-- Large bounds including `-2^31` via `long` conversion.
-- Non-repeating example: `1/2 -> 0.5`.
-- Repeating example: `4/333 -> 0.(012)`.
+        if ((numerator < 0) ^ (denominator < 0)) {
+            result.append('-');
+        }
+
+        long dividend = Math.abs((long) numerator);
+        long divisor = Math.abs((long) denominator);
+
+        result.append(dividend / divisor);
+
+        long remainder = dividend % divisor;
+        if (remainder == 0) {
+            return result.toString();
+        }
+
+        result.append('.');
+
+        Map<Long, Integer> remainderToIndex = new HashMap<>();
+
+        while (remainder != 0) {
+            if (remainderToIndex.containsKey(remainder)) {
+                int repeatStart = remainderToIndex.get(remainder);
+                result.insert(repeatStart, '(');
+                result.append(')');
+                break;
+            }
+
+            remainderToIndex.put(remainder, result.length());
+            remainder *= 10;
+            result.append(remainder / divisor);
+            remainder %= divisor;
+        }
+
+        return result.toString();
+    }
+}
+```
