@@ -26,4 +26,4 @@ class Solution {
 
         return null;
     }
-}
+}Microsoft.QuickAction.MobileHotspot
