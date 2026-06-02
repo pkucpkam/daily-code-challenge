@@ -1,105 +1,70 @@
-# 388. Longest Absolute File Path - Explanation
+# Explanation of Elimination Game Solution
 
-## Problem Overview
+## The Approach
 
-The task is to find the length of the **longest absolute path to a file** in a given string representing a hierarchical file system. 
+To achieve the optimal $O(\log n)$ time complexity and $O(1)$ space complexity, we must simulate the process without actually creating or modifying any arrays.
 
-The file system representation uses:
-* `\n` to separate different files/directories.
-* `\t` to specify the depth/level of a file or directory (each additional `\t` represents one level deeper).
-* A dot (`.`) to distinguish files from directories (only files have a `.`).
+Instead of keeping track of all the elements, we only need to keep track of the **head** (the very first element) of the remaining sequence. If we know the first element when the array size is reduced to 1, that single element is our answer.
 
-If there are no files in the system, we should return `0`.
+To do this, we maintain four variables:
+1. `head`: The first element of the remaining list (initially `1`).
+2. `step`: The gap between consecutive elements in the remaining list (initially `1`).
+3. `remaining`: The number of elements currently left (initially `n`).
+4. `leftToRight`: A boolean flag indicating the current direction of traversal (initially `true`).
 
----
+## When Does the Head Change?
 
-## Key Intuition: Depth-Tracking Array (or Stack)
+In each pass, we eliminate half of the elements. But the key question is: **does the `head` change?**
 
-Since the input represents a depth-first representation of a file system hierarchy, we can process it **line-by-line** (or path-by-path):
+There are only two scenarios where the `head` will change and move to the right (by `step`):
 
-1. **Depth Detection**: The number of leading `\t` characters tells us the current depth level (0-indexed).
-2. **Path Length Accumulation**:
-   * We need a way to look up the length of the parent directory path for any given depth.
-   * We can use an array `pathLen` where `pathLen[depth]` stores the total prefix length up to `depth` (including the separating `/` character).
-3. **Transition**:
-   * If the current item is a **directory**:
-     * We update `pathLen[depth + 1] = pathLen[depth] + nameLen + 1`. The `+ 1` accounts for the `/` separator.
-   * If the current item is a **file**:
-     * The absolute path length to this file is `pathLen[depth] + nameLen`.
-     * We compare this with our global maximum `maxLen` and update it if it's larger.
+1. **When moving from Left to Right:** 
+   We always delete the first element, so the `head` will **always** be deleted. The new head will be the next available number, which is `head + step`.
+2. **When moving from Right to Left, AND the number of remaining elements is ODD:** 
+   Because we start deleting from the rightmost element, if there's an odd number of elements, we will eventually delete the leftmost element (the `head`). Thus, the head becomes `head + step`.
+   *(If the number of remaining elements is EVEN, we delete the 2nd, 4th, 6th... from the left, meaning the 1st element (`head`) survives, so it doesn't change).*
 
----
+## State Updates After Each Pass
 
-## Step-by-Step Walkthrough
+After checking if the `head` needs to be updated and making the change, we update the other variables for the next pass:
+- `remaining = remaining / 2` (since half of the numbers are deleted).
+- `step = step * 2` (since the gap between remaining numbers doubles).
+- `leftToRight = !leftToRight` (flip the direction).
 
-Let's trace the algorithm with **Example 2**:
-`input = "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext"`
+We repeat this process as long as `remaining > 1`.
 
-Initial State:
-* `maxLen = 0`
-* `pathLen = [0, 0, 0, 0, 0]`
+## Example Walkthrough
 
-| Step | Line | Leading Tabs (`depth`) | Name Length (`nameLen`) | Is File? | State Update | `pathLen` Array | `maxLen` |
-|:---:| :--- |:---:|:---:|:---:| :--- | :--- |:---:|
-| **1** | `"dir"` | `0` | `3` | No | Directory path length update at `depth + 1`: `pathLen[1] = pathLen[0] + 3 + 1 = 4` | `[0, 4, 0, 0, 0]` | `0` |
-| **2** | `"\tsubdir1"` | `1` | `7` | No | Directory path length update at `depth + 1`: `pathLen[2] = pathLen[1] + 7 + 1 = 12` | `[0, 4, 12, 0, 0]` | `0` |
-| **3** | `"\t\tfile1.ext"` | `2` | `9` | Yes | File absolute path: `pathLen[2] + 9 = 12 + 9 = 21`. Update `maxLen`. | `[0, 4, 12, 0, 0]` | `21` |
-| **4** | `"\t\tsubsubdir1"` | `2` | `10` | No | Directory path length update at `depth + 1`: `pathLen[3] = pathLen[2] + 10 + 1 = 23` | `[0, 4, 12, 23, 0]` | `21` |
-| **5** | `"\tsubdir2"` | `1` | `7` | No | Directory path length update at `depth + 1`: `pathLen[2] = pathLen[1] + 7 + 1 = 12` | `[0, 4, 12, 23, 0]` | `21` |
-| **6** | `"\t\tsubsubdir2"` | `2` | `10` | No | Directory path length update at `depth + 1`: `pathLen[3] = pathLen[2] + 10 + 1 = 23` | `[0, 4, 12, 23, 0]` | `21` |
-| **7** | `"\t\t\tfile2.ext"` | `3` | `9` | Yes | File absolute path: `pathLen[3] + 9 = 23 + 9 = 32`. Update `maxLen`. | `[0, 4, 12, 23, 0]` | `32` |
+Let's say $n = 9$.
+Initial State: `head = 1, step = 1, remaining = 9, leftToRight = true`
+List: `[1, 2, 3, 4, 5, 6, 7, 8, 9]`
 
-**Final Return Value:** `32`
+**Pass 1:**
+- `leftToRight` is `true`, so we update `head`.
+- `head = 1 + 1 = 2`.
+- `remaining = 9 / 2 = 4`.
+- `step = 1 * 2 = 2`.
+- `leftToRight = false`.
+- *(Implicit List is now `[2, 4, 6, 8]`)*
 
----
+**Pass 2:**
+- `leftToRight` is `false`. We check if `remaining` is odd. `4 % 2 == 0`, so it is even.
+- `head` remains `2`.
+- `remaining = 4 / 2 = 2`.
+- `step = 2 * 2 = 4`.
+- `leftToRight = true`.
+- *(Implicit List is now `[2, 6]`)*
 
-## Complexity Analysis
+**Pass 3:**
+- `leftToRight` is `true`, so we update `head`.
+- `head = 2 + 4 = 6`.
+- `remaining = 2 / 2 = 1`.
+- `step = 4 * 2 = 8`.
+- `leftToRight = false`.
+- *(Implicit List is now `[6]`)*
 
-* **Time Complexity:** $\mathcal{O}(N)$
-  * Splitting the string takes $\mathcal{O}(N)$ where $N$ is the number of characters in `input`.
-  * Iterating through the lines and finding the leading tabs takes $\mathcal{O}(N)$ time overall since each character in `input` is examined at most a constant number of times.
-  
-* **Space Complexity:** $\mathcal{O}(N)$
-  * Storing the split array of lines requires $\mathcal{O}(N)$ space.
-  * The auxiliary tracking array `pathLen` requires $\mathcal{O}(D)$ space, where $D$ is the maximum depth of the file system ($D \le N$).
+Now `remaining = 1`. The loop terminates. The answer is `head`, which is **6**.
 
----
-
-## Optimal Java Implementation
-
-```java
-class Solution {
-    public int lengthLongestPath(String input) {
-        if (input == null || input.isEmpty()) {
-            return 0;
-        }
-        
-        String[] lines = input.split("\n");
-        // pathLen[d] stores the accumulated length of the path up to depth 'd' (including '/' separator)
-        int[] pathLen = new int[lines.length + 1];
-        int maxLen = 0;
-        
-        for (String line : lines) {
-            int depth = 0;
-            // Count the number of leading '\t' characters to determine the depth
-            while (depth < line.length() && line.charAt(depth) == '\t') {
-                depth++;
-            }
-            
-            // The length of the file or directory name
-            int nameLen = line.length() - depth;
-            
-            // If the name contains '.', it is a file
-            if (line.indexOf('.') != -1) {
-                maxLen = Math.max(maxLen, pathLen[depth] + nameLen);
-            } else {
-                // If it is a directory, update the path length for the next level
-                // +1 is for the '/' character that separates directories
-                pathLen[depth + 1] = pathLen[depth] + nameLen + 1;
-            }
-        }
-        
-        return maxLen;
-    }
-}
-```
+## Complexity
+- **Time Complexity:** $O(\log n)$. At each step, we divide the remaining elements by 2.
+- **Space Complexity:** $O(1)$. We only use four variables to keep track of the state, regardless of the size of $n$.
