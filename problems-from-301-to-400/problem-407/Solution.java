@@ -1,26 +1,56 @@
-class Solution {
-    public String reverseWords(String s) {
-        char[] chars = s.toCharArray();
-        int n = chars.length;
-        int start = 0;
+/*
+// Definition for a QuadTree node.
+class Node {
+    public boolean val;
+    public boolean isLeaf;
+    public Node topLeft;
+    public Node topRight;
+    public Node bottomLeft;
+    public Node bottomRight;
 
-        for (int end = 0; end <= n; end++) {
-            if (end == n || chars[end] == ' ') {
-                reverse(chars, start, end - 1);
-                start = end + 1;
-            }
-        }
+    public Node() {}
 
-        return new String(chars);
+    public Node(boolean _val, boolean _isLeaf) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = null;
+        topRight = null;
+        bottomLeft = null;
+        bottomRight = null;
     }
 
-    private void reverse(char[] chars, int left, int right) {
-        while (left < right) {
-            char temp = chars[left];
-            chars[left] = chars[right];
-            chars[right] = temp;
-            left++;
-            right--;
+    public Node(boolean _val, boolean _isLeaf, Node _topLeft, Node _topRight, Node _bottomLeft, Node _bottomRight) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = _topLeft;
+        topRight = _topRight;
+        bottomLeft = _bottomLeft;
+        bottomRight = _bottomRight;
+    }
+};
+*/
+
+class Solution {
+    public Node intersect(Node quadTree1, Node quadTree2) {
+        if (quadTree1.isLeaf) {
+            return quadTree1.val ? quadTree1 : quadTree2;
         }
+        if (quadTree2.isLeaf) {
+            return quadTree2.val ? quadTree2 : quadTree1;
+        }
+
+        Node topLeft = intersect(quadTree1.topLeft, quadTree2.topLeft);
+        Node topRight = intersect(quadTree1.topRight, quadTree2.topRight);
+        Node bottomLeft = intersect(quadTree1.bottomLeft, quadTree2.bottomLeft);
+        Node bottomRight = intersect(quadTree1.bottomRight, quadTree2.bottomRight);
+
+        if (topLeft.isLeaf && topRight.isLeaf && bottomLeft.isLeaf && bottomRight.isLeaf
+                && topLeft.val == topRight.val
+                && topRight.val == bottomLeft.val
+                && bottomLeft.val == bottomRight.val) {
+            return new Node(topLeft.val, true);
+        }
+
+        return new Node(false, false, topLeft, topRight, bottomLeft, bottomRight);
     }
 }
